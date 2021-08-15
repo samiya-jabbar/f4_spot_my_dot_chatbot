@@ -7,8 +7,6 @@ app = Flask(__name__)
 
 def handler(agent: WebhookClient) :
     """Handle the webhook request.."""
-       
-    url = 'http://aiderma.ew.r.appspot.com/auth_account'
 
     req = request.get_json(force=True)
     intent_name = req.get('queryResult').get('intent').get('displayName')
@@ -18,28 +16,64 @@ def handler(agent: WebhookClient) :
         agent.add(QuickReplies(quick_replies=['START NOW','LOGIN']))
 
     if intent_name == 'get_started':
+        url = 'http://aiderma.ew.r.appspot.com/create_account'
         userid = req.get('queryResult').get('parameters').get('email')
         print(userid)
         pwd = req.get('queryResult').get('parameters').get('pwd')
-        print(pwd)
-        name = req.get('queryResult').get('parameters').get('pwd')
+        print(pwd)       
+        name = req.get('queryResult').get('parameters').get('name')
         print(name)
-        age = req.get('queryResult').get('parameters').get('pwd')
-        print(age)
-        myobj = {'userid': userid, 'pwd': pwd , 'name' : name}
-        x = requests.post(url, data = myobj)
-        print(x.text)
-        agent.add("intent triggered")
 
+    if intent_name == 'get_started - age':
+        age = req.get('queryResult').get('parameters').get('age')['amount']
+        print(age)
+
+    if intent_name == 'get_started - image':
+        image = req.get('queryResult').get('parameters').get('image')
+        print(image)
+
+
+        """ 
+        if age == "none" :    
+            myobj = {'userid': userid, 'pwd': pwd , 'name' : name}
+            x = requests.post(url, data = myobj)
+            result=x.text
+            print("age not present")
+            agent.add(result)
+
+        if age != "none":
+            myobj = {'userid': userid, 'pwd': pwd , 'name' : name, 'age' : age}
+            x = requests.post(url, data = myobj)
+            result=x.text
+            print("age present")
+            agent.add(result)
+
+            """
+            
 
     if intent_name == 'login_screen' :
+        url = 'http://aiderma.ew.r.appspot.com/auth_account'
         userid = req.get('queryResult').get('parameters').get('email')
         print(userid)
         pwd = req.get('queryResult').get('parameters').get('pwd')
         print(pwd)
         myobj = {'userid': userid, 'pwd': pwd }
         x = requests.post(url, data = myobj)
-        print(x.text)
+        result = x.text
+        print(result)
+        agent.set_followup_event("start_chatbot")
+
+    if intent_name == 'the_start':
+        agent.add('Hi name .  I’m your personaldermatologist! Need my help to diagnose your skin moles or birthmarks…?')
+        agent.add(QuickReplies(quick_replies=['TAKE A PICTURE','BACK TO PROFILE']))
+
+    if intent_name == 'take_a_pic':
+        agent.add(QuickReplies(quick_replies=['CAMERA']))
+
+    if intent_name == 'upload_a_captured_image':
+        url = 'http://aiderma.ew.r.appspot.com//store_and_diagnose_image'
+        image = req.get('queryResult').get('parameters').get('image')
+        print(image)           
 
     if intent_name == 'name_number_1':
         name = req.get('queryResult').get('parameters').get('name')
@@ -65,6 +99,17 @@ if __name__ == '__main__':
     if intent_name == 'get_started':
         agent.add('Ok, let’s create your account! Can I get the following from you?')
         agent.add('What is your full name?')
+
+    imp = req.get('allRequiredParamsPresent')
+        print(imp)
+        if imp == 'true' :   
+            myobj = {'userid': userid, 'pwd': pwd , 'name' : name}
+            x = requests.post(url, data = myobj)
+            print(x.text)
+            agent.add("intent triggered")
+
+         if (userid and pwd and name and age) == True:   
+            myobj = {'userid': userid, 'pwd': pwd , 'name' : name , 'age' : age}
 
     if intent_name == 'get_started - age':
         agent.add('How old are you?')
