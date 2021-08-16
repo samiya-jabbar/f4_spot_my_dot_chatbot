@@ -15,7 +15,45 @@ def handler(agent: WebhookClient) :
         agent.add('I am the chatbot of this page. Ready to assist you with anything you need. What would you like to do?')
         agent.add(QuickReplies(quick_replies=['START NOW','LOGIN']))
 
-    if intent_name == 'get_started':
+    if intent_name == 'ask_pwd':
+        global name 
+        global userid
+        name = req.get('queryResult').get('parameters').get('name')
+        print(name)
+        userid = req.get('queryResult').get('parameters').get('email')
+        print(userid)
+
+    if intent_name == 'ask_age':
+        global pwd
+        pwd = req.get('queryResult').get('parameters').get('pwd')
+        print(pwd)
+
+    if intent_name == 'ask_image':
+        global age
+        age = req.get('queryResult').get('parameters').get('age')
+        print(age)
+
+    if intent_name == 'ask_bp':
+        global image
+        image = req.get('queryResult').get('parameters').get('image')
+        print(image)
+
+
+    if intent_name == 'signed_up':
+        bp = req.get('queryResult').get('parameters').get('bp')
+        print(bp)
+        url = 'http://aiderma.ew.r.appspot.com/create_account'
+        print(userid)
+        print(pwd)
+        print(name)
+        myobj = {'userid': userid, 'pwd': pwd , 'name' : name}
+        x = requests.post(url, data = myobj)
+        result=x.text
+        agent.add(result)
+        
+
+
+    if intent_name == 'get_start':
         url = 'http://aiderma.ew.r.appspot.com/create_account'
         userid = req.get('queryResult').get('parameters').get('email')
         print(userid)
@@ -64,16 +102,26 @@ def handler(agent: WebhookClient) :
         agent.set_followup_event("start_chatbot")
 
     if intent_name == 'the_start':
-        agent.add('Hi name .  I’m your personaldermatologist! Need my help to diagnose your skin moles or birthmarks…?')
+        name = 'xyz'
+        agent.add(f'Hi {name} .  I’m your personaldermatologist! Need my help to diagnose your skin moles or birthmarks…?')
         agent.add(QuickReplies(quick_replies=['TAKE A PICTURE','BACK TO PROFILE']))
 
     if intent_name == 'take_a_pic':
+        name = 'xyz'
+        agent.add(f'Ok,{name}! Let’s get started…I just need you to press the camera button below so I can see what your suspicious mole, birthmark, or skin lesion looks like. Thanks!. Do you want to upload that image?')
         agent.add(QuickReplies(quick_replies=['CAMERA']))
 
+    if intent_name == 'camera_mode':
+        agent.add(QuickReplies(quick_replies=['UPLOAD']))
+
     if intent_name == 'upload_a_captured_image':
-        url = 'http://aiderma.ew.r.appspot.com//store_and_diagnose_image'
+        url = 'http://aiderma.ew.r.appspot.com/store_and_diagnose_image'
         image = req.get('queryResult').get('parameters').get('image')
-        print(image)           
+        print(image)
+        myobj = {'userid': userid, 'image': image }
+        x = requests.post(url, data = myobj)
+        result = x.text
+        print(result)           
 
     if intent_name == 'name_number_1':
         name = req.get('queryResult').get('parameters').get('name')

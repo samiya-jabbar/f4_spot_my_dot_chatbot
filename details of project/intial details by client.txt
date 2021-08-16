@@ -1,0 +1,14 @@
+Hi,
+Interested in developing a chatbot in DialogFlow?
+I have the main flow steps described including text transcripts, you also need to cover all alternative flows that will guide the user back to the main flow (the task that needs to be done)
+
+Here is the workflow text with API-methods , the bot must also handle if the user aska questions that are irrelevant for the main flow and guide the user back so that the user can continue with the flow. It needs to remember what has been collected and intellgenty guide the user back again
+
+database : Firebase Realtime
+
+Hi
+
+I need the bot in 10 days not delaying the complete project. You only need to implement it in DialogFlow no GUI development this will then be integrated in a mobile app but it’s outside this project
+
+
+
