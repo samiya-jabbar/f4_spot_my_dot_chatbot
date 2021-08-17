@@ -15,11 +15,13 @@ def handler(agent: WebhookClient) :
         agent.add('I am the chatbot of this page. Ready to assist you with anything you need. What would you like to do?')
         agent.add(QuickReplies(quick_replies=['START NOW','LOGIN']))
 
-    if intent_name == 'ask_pwd':
+    if intent_name == 'ask_email':
         global name 
-        global userid
         name = req.get('queryResult').get('parameters').get('name')
         print(name)
+
+    if intent_name == 'ask_pwd':
+        global userid
         userid = req.get('queryResult').get('parameters').get('email')
         print(userid)
 
