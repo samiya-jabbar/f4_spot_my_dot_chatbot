@@ -73,24 +73,6 @@ def handler(agent: WebhookClient) :
         print(image)
 
 
-        """ 
-        if age == "none" :    
-            myobj = {'userid': userid, 'pwd': pwd , 'name' : name}
-            x = requests.post(url, data = myobj)
-            result=x.text
-            print("age not present")
-            agent.add(result)
-
-        if age != "none":
-            myobj = {'userid': userid, 'pwd': pwd , 'name' : name, 'age' : age}
-            x = requests.post(url, data = myobj)
-            result=x.text
-            print("age present")
-            agent.add(result)
-
-            """
-            
-
     if intent_name == 'login_screen' :
         url = 'http://aiderma.ew.r.appspot.com/auth_account'
         userid = req.get('queryResult').get('parameters').get('email')
