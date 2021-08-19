@@ -18,13 +18,16 @@ def handler(agent: WebhookClient) :
     if intent_name == 'login':
         agent.set_followup_event("awaiting_click_on_logon_button")
 
+    if intent_name == 'again_login':
+        agent.add('Error while login, Try Again')
+        agent.add(QuickReplies(quick_replies=['LOGIN HERE', 'GO BACK']))
 
     if intent_name == 'login_screen' :
         global userid
         global pwd
         url = 'http://aiderma.ew.r.appspot.com/auth_account'
         userid = req.get('queryResult').get('parameters').get('email')
-        print(userid)
+        print('userid', userid)
         pwd = req.get('queryResult').get('parameters').get('pwd')
         print(pwd)
         myobj = {'userid': userid, 'pwd': pwd }
@@ -35,10 +38,10 @@ def handler(agent: WebhookClient) :
         if result['status'] == "ok":
             agent.set_followup_event("start_chatbot")
         else:
-            agent.add("Error while login")
-
+            agent.set_followup_event("awaiting_for_again_login")
+            
     if intent_name == 'the_start':
-        name = 'xyz'
+        name = 'Buddy'
         agent.add(f'Hi {name}. I’m your personaldermatologist! Need my help to diagnose your skin moles or birthmarks…?')
         agent.add(QuickReplies(quick_replies=['TAKE A PICTURE','BACK TO PROFILE']))
 
@@ -51,19 +54,60 @@ def handler(agent: WebhookClient) :
         agent.add(result) 
 
     if intent_name == 'take_a_pic':
-        name = 'xyz'
+        name = 'Buddy'
         agent.add(f'Ok,{name}! Let’s get started…I just need you to press the camera button below so I can see what your suspicious mole, birthmark, or skin lesion looks like. Thanks!. #name.name, please go ahead and hold the camera over the suspicious mole (from around 10-15cm away). Move around until the red circle turns green – this means your skin lesion is in focus and you can take a photo. Thanks!')
         agent.add(QuickReplies(quick_replies=['CAMERA']))
 
     if intent_name == 'upload_a_captured_image':
         url = 'http://aiderma.ew.r.appspot.com/store_and_diagnose_image'
         image = req.get('queryResult').get('parameters').get('image')
-        print(image)
         myobj = {'userid' : userid,'image': image }
         x = requests.post(url, data = myobj)
         result = x.text
         print(result) 
+        diagnose_output = x['diagnose_output']
+        time_stamp = x['time_stamp']
+        # For green = 1 , yellow = 2 , red = 3 , unknown = 0
+        if diagnose_output == 1:
+            agent.set_followup_event('result_is_green')
+        if diagnose_output == 2:
+            agent.set_followup_event('result_is_yellow')
+        if diagnose_output == 3:
+             agent.set_followup_event('result_is_red')
+        if diagnose_output == 0:
+             agent.set_followup_event('result_is_unknown')
 
+    if intent_name == 'result_green - yes':
+        agent.add('Ok, let me take another look')
+        agent.add(QuickReplies(quick_replies=['CAMERA']))
+
+    if intent_name == 'result_yellow - yes':
+        agent.add('Let’s book your appointment / want to take another picture?')
+        agent.add(QuickReplies(quick_replies=['BOOK APPOINTMENT', 'CAMERA']))
+
+    if intent_name == 'result_red - yes':
+        agent.add('Ok, let’s secure your appointment!')
+        agent.add(QuickReplies(quick_replies=['BOOK NOW']))
+
+    if intent_name == 'result_unknown':
+        agent.add('[NAME], I’m struggling to provide a diagnosis for this skin lesion – the best thing to do would be to book an in-person appointment with a dermatologist. Best of luck, and have a great day further')
+        agent.add(QuickReplies(quick_replies=['BOOK NOW', 'GO BACK']))
+
+    if intent_name == 'profile_setup':
+        url = 'http://aiderma.ew.r.appspot.com/fetch_metadata'
+        image = req.get('queryResult').get('parameters').get('image')
+        print(image)
+        myobj = {'userid' : userid }
+        x = requests.post(url, data = myobj)
+        result = x.text
+
+    if intent_name == 'book_appointment':
+        agent.add('Let’s book your appointment / want to take another picture?')
+        agent.add(QuickReplies(quick_replies=['BOOK NOW', 'BOOK A DERMATOLOGIST']))
+
+    if intent_name == 'book_appointment':
+        url='http://aiderma.ew.r.appspot.com/book_an_appointment'
+      
     if intent_name == 'signup':
         agent.set_followup_event("awaiting_click_on_startnow_button")
 
