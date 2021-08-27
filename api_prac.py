@@ -23,6 +23,13 @@ print(x)
 result = json.loads(x)
 print(result['metadata']['name'])
 
+ choice = req.get('queryResult').get('queryText')
+            if choice == 'TAKE A PICTURE':
+                print("ok")
+                agent.set_followup_event("start_chatbot")
+            if choice == 'BACK TO PROFILE':
+                agent.set_followup_event("back_to_profile")
+                
 
 
 
