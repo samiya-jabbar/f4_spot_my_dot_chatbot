@@ -8,4 +8,4 @@ https://www.youtube.com/watch?v=xU8kee5zK3o
 
 ## Architecture:
 Dialogflow is used for chatbot development and Webhook is written in FLASK (python).
-Chatbot will be integrated with Mobile Application (later by another developer
+Chatbot will be integrated with Mobile Application (later by another developer)
